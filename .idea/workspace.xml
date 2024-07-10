@@ -4,15 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="05fec14a-2bab-4e95-af15-91d42fc62680" name="Changes" comment="Download books with titles">
+    <list default="true" id="05fec14a-2bab-4e95-af15-91d42fc62680" name="Changes" comment="Download book covers">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/books/Административные рынки СССР и России.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/books/Азбука экономики.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/books/Азиатский способ производства и Азиатский социализм.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/books/Бал хищников.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/books/Бархатная революция в рекламе.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/books/Бизнес путь.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/books/Бизнес-разведка.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bs4_tutorial.py" beforeDir="false" afterPath="$PROJECT_DIR$/bs4_tutorial.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -89,13 +83,22 @@
       <option name="project" value="LOCAL" />
       <updated>1720551057066</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="Download book covers">
+      <option name="closed" value="true" />
+      <created>1720628208069</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1720628208069</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Download books from tululu.org" />
     <MESSAGE value="Добавил обработчик исключений при скачивании книг" />
     <MESSAGE value="Download books with titles" />
-    <option name="LAST_COMMIT_MESSAGE" value="Download books with titles" />
+    <MESSAGE value="Download book covers" />
+    <option name="LAST_COMMIT_MESSAGE" value="Download book covers" />
   </component>
 </project>

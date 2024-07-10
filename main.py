@@ -49,6 +49,13 @@ def get_image(url, book_id):
     return None
 
 
+def get_book_comments(url, book_id):
+    soup = fetch_book_page(url, book_id)
+    comments = soup.find_all(class_="texts")
+    for comment in comments:
+        print(comment.find(class_="black").text)
+
+
 def download_txt(url, filename, folder='books/'):
     if not os.path.exists(folder):
         os.makedirs(folder)
@@ -80,7 +87,7 @@ for book_id in books_id:
         filename, author = get_author_and_title(URL, book_id)
         download_txt(download_url, filename, folder='books/')
         download_image(URL, filename, book_id)
-        print(1)
+        get_book_comments(URL, book_id)
 
     except requests.RequestException:
         print(f"Ошибка при запросе книги {book_id}")
