@@ -1,3 +1,4 @@
+import argparse
 import os
 import requests
 from pathlib import Path
@@ -5,7 +6,6 @@ from bs4 import BeautifulSoup
 from pathvalidate import sanitize_filename
 from urllib.parse import urljoin
 
-books_id = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 URL = "https://tululu.org"
 
 
@@ -32,6 +32,7 @@ def get_author_and_title(soup):
             text_split = text.split(':')
             title = text_split[0].strip()
             author = text_split[2].strip()
+            print(f"Название: {title}\nАвтор: {author}")
             return title, author
     return None, None
 
@@ -42,7 +43,6 @@ def get_image(soup):
         image_tag = content_div.find('a').find("img")
         if image_tag:
             image_url = urljoin("https://tululu.org/", image_tag["src"])
-            print(image_url)
             return image_url
     return None
 
@@ -50,14 +50,14 @@ def get_image(soup):
 def get_book_comments(soup):
     comments = soup.find_all(class_="texts")
     for comment in comments:
-        print(comment.find(class_="black").text)
+        print(f"Комментарий к книге:\n{comment.find(class_="black").text}")
 
 
 def get_book_genre(soup):
     book_genres = soup.find_all("span", class_="d_book")
     for genre in book_genres:
         for genre_link in genre.find_all("a"):
-            print(genre_link.text, "\n")
+            print(f"Жанр книги - {genre_link.text}\n")
 
 
 def download_txt(url, filename, folder='books/'):
@@ -86,7 +86,13 @@ def download_image(filename, soup, folder='images/'):
 
 def main():
     Path("./books").mkdir(parents=True, exist_ok=True)
-    for book_id in books_id:
+    parser = argparse.ArgumentParser(prog='main', description='запускает скрипт для скачивания книг')
+    parser.add_argument('start_id', default=1, help="Укажите начальный ID книги для скачивания",
+                        type=int)
+    parser.add_argument('end_id', default=11, help="Укажите конечный ID книги для скачивания",
+                        type=int)
+    parser_args = parser.parse_args()
+    for book_id in range(parser_args.start_id, parser_args.end_id+1):
         download_url = f"{URL}/txt.php?id={book_id}"
         try:
             soup = fetch_book_page(URL, book_id)
@@ -96,7 +102,7 @@ def main():
             get_book_comments(soup)
             get_book_genre(soup)
         except requests.RequestException:
-            print(f"Ошибка при запросе книги {book_id}")
+            pass
 
 
 if __name__ == "__main__":
