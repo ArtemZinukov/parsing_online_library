@@ -139,6 +139,6 @@ cython_debug/
 
 .idea/
 
-./books/
+.books/
 
-./images/
+.images/
