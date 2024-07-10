@@ -23,8 +23,7 @@ def fetch_book_page(url, book_id):
     return BeautifulSoup(response.text, 'lxml')
 
 
-def get_author_and_title(url, book_id):
-    soup = fetch_book_page(url, book_id)
+def get_author_and_title(soup):
     content_div = soup.find('div', {'id': 'content'})
     if content_div:
         h1_tag = content_div.find('h1')
@@ -37,8 +36,7 @@ def get_author_and_title(url, book_id):
     return None, None
 
 
-def get_image(url, book_id):
-    soup = fetch_book_page(url, book_id)
+def get_image(soup):
     content_div = soup.find('div', class_="bookimage")
     if content_div:
         image_tag = content_div.find('a').find("img")
@@ -49,11 +47,17 @@ def get_image(url, book_id):
     return None
 
 
-def get_book_comments(url, book_id):
-    soup = fetch_book_page(url, book_id)
+def get_book_comments(soup):
     comments = soup.find_all(class_="texts")
     for comment in comments:
         print(comment.find(class_="black").text)
+
+
+def get_book_genre(soup):
+    book_genres = soup.find_all("span", class_="d_book")
+    for genre in book_genres:
+        for genre_link in genre.find_all("a"):
+            print(genre_link.text, "\n")
 
 
 def download_txt(url, filename, folder='books/'):
@@ -67,12 +71,12 @@ def download_txt(url, filename, folder='books/'):
         file.write(response.content)
 
 
-def download_image(url, filename, book_id, folder='images/'):
+def download_image(filename, soup, folder='images/'):
     if not os.path.exists(folder):
         os.makedirs(folder)
     filename = sanitize_filename(filename)
     filepath = os.path.join(folder, f"{filename}.jpg")
-    image_url = get_image(url, book_id)
+    image_url = get_image(soup)
     response = requests.get(image_url)
     response = check_for_redirect(response)
 
@@ -84,10 +88,11 @@ Path("./books").mkdir(parents=True, exist_ok=True)
 for book_id in books_id:
     download_url = f"{URL}/txt.php?id={book_id}"
     try:
-        filename, author = get_author_and_title(URL, book_id)
+        soup = fetch_book_page(URL, book_id)
+        filename, author = get_author_and_title(soup)
         download_txt(download_url, filename, folder='books/')
-        download_image(URL, filename, book_id)
-        get_book_comments(URL, book_id)
-
+        download_image(filename, soup)
+        get_book_comments(soup)
+        get_book_genre(soup)
     except requests.RequestException:
         print(f"Ошибка при запросе книги {book_id}")
