@@ -4,17 +4,15 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="05fec14a-2bab-4e95-af15-91d42fc62680" name="Changes" comment="Добавил обработчик исключений при скачивании книг">
-      <change afterPath="$PROJECT_DIR$/bs4_tutorial.py" afterDir="false" />
+    <list default="true" id="05fec14a-2bab-4e95-af15-91d42fc62680" name="Changes" comment="Download books with titles">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/books/book-1.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/books/book-10.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/books/book-3.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/books/book-4.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/books/book-5.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/books/book-6.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/books/book-8.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/books/book-9.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/books/Административные рынки СССР и России.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/books/Азбука экономики.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/books/Азиатский способ производства и Азиатский социализм.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/books/Бал хищников.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/books/Бархатная революция в рекламе.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/books/Бизнес путь.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/books/Бизнес-разведка.txt" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -47,6 +45,7 @@
     &quot;Python.main.executor&quot;: &quot;Run&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+    &quot;last_opened_file_path&quot;: &quot;A:/Курс_DEVMAN/Lesson1. Get the weather from the terminal/Weather&quot;,
     &quot;settings.editor.selected.configurable&quot;: &quot;com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable&quot;
   }
 }</component>
@@ -82,12 +81,21 @@
       <option name="project" value="LOCAL" />
       <updated>1720463146860</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="Download books with titles">
+      <option name="closed" value="true" />
+      <created>1720551057066</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1720551057066</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Download books from tululu.org" />
     <MESSAGE value="Добавил обработчик исключений при скачивании книг" />
-    <option name="LAST_COMMIT_MESSAGE" value="Добавил обработчик исключений при скачивании книг" />
+    <MESSAGE value="Download books with titles" />
+    <option name="LAST_COMMIT_MESSAGE" value="Download books with titles" />
   </component>
 </project>

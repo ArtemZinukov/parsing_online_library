@@ -3,6 +3,7 @@ import requests
 from pathlib import Path
 from bs4 import BeautifulSoup
 from pathvalidate import sanitize_filename
+from urllib.parse import urljoin
 
 books_id = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 URL = "https://tululu.org"
@@ -14,13 +15,16 @@ def check_for_redirect(response):
     return response
 
 
-def get_author_and_title(url, book_id):
+def fetch_book_page(url, book_id):
     url_book = f"{url}/b{book_id}/"
     response = requests.get(url_book)
     response.raise_for_status()
 
-    soup = BeautifulSoup(response.text, 'lxml')
+    return BeautifulSoup(response.text, 'lxml')
 
+
+def get_author_and_title(url, book_id):
+    soup = fetch_book_page(url, book_id)
     content_div = soup.find('div', {'id': 'content'})
     if content_div:
         h1_tag = content_div.find('h1')
@@ -31,6 +35,18 @@ def get_author_and_title(url, book_id):
             author = text_split[2].strip()
             return title, author
     return None, None
+
+
+def get_image(url, book_id):
+    soup = fetch_book_page(url, book_id)
+    content_div = soup.find('div', class_="bookimage")
+    if content_div:
+        image_tag = content_div.find('a').find("img")
+        if image_tag:
+            image_url = urljoin("https://tululu.org/", image_tag["src"])
+            print(image_url)
+            return image_url
+    return None
 
 
 def download_txt(url, filename, folder='books/'):
@@ -44,13 +60,27 @@ def download_txt(url, filename, folder='books/'):
         file.write(response.content)
 
 
+def download_image(url, filename, book_id, folder='images/'):
+    if not os.path.exists(folder):
+        os.makedirs(folder)
+    filename = sanitize_filename(filename)
+    filepath = os.path.join(folder, f"{filename}.jpg")
+    image_url = get_image(url, book_id)
+    response = requests.get(image_url)
+    response = check_for_redirect(response)
+
+    with open(filepath, 'wb') as file:
+        file.write(response.content)
+
+
 Path("./books").mkdir(parents=True, exist_ok=True)
 for book_id in books_id:
     download_url = f"{URL}/txt.php?id={book_id}"
     try:
         filename, author = get_author_and_title(URL, book_id)
         download_txt(download_url, filename, folder='books/')
+        download_image(URL, filename, book_id)
+        print(1)
 
     except requests.RequestException:
         print(f"Ошибка при запросе книги {book_id}")
-
