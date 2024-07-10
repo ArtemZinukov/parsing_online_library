@@ -84,15 +84,20 @@ def download_image(filename, soup, folder='images/'):
         file.write(response.content)
 
 
-Path("./books").mkdir(parents=True, exist_ok=True)
-for book_id in books_id:
-    download_url = f"{URL}/txt.php?id={book_id}"
-    try:
-        soup = fetch_book_page(URL, book_id)
-        filename, author = get_author_and_title(soup)
-        download_txt(download_url, filename, folder='books/')
-        download_image(filename, soup)
-        get_book_comments(soup)
-        get_book_genre(soup)
-    except requests.RequestException:
-        print(f"Ошибка при запросе книги {book_id}")
+def main():
+    Path("./books").mkdir(parents=True, exist_ok=True)
+    for book_id in books_id:
+        download_url = f"{URL}/txt.php?id={book_id}"
+        try:
+            soup = fetch_book_page(URL, book_id)
+            filename, author = get_author_and_title(soup)
+            download_txt(download_url, filename, folder='books/')
+            download_image(filename, soup)
+            get_book_comments(soup)
+            get_book_genre(soup)
+        except requests.RequestException:
+            print(f"Ошибка при запросе книги {book_id}")
+
+
+if __name__ == "__main__":
+    main()
