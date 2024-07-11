@@ -98,15 +98,24 @@ def main():
                         type=int)
     parser_args = parser.parse_args()
     for book_id in range(parser_args.start_id, parser_args.end_id+1):
-        try:
-            soup = fetch_book_page(URL, book_id)
-            filename, author = get_author_and_title(soup)
-            download_txt(URL, book_id, filename, folder='books/')
-            download_image(filename, soup)
-            get_book_comments(soup)
-            get_book_genre(soup)
-        except requests.RequestException as err:
-            print(f"Ошибка загрузки книги - {book_id}: {err}")
+        max_attempts = 3
+        for attempt in range(max_attempts):
+            try:
+                soup = fetch_book_page(URL, book_id)
+                filename, author = get_author_and_title(soup)
+                download_txt(URL, book_id, filename, folder='books/')
+                download_image(filename, soup)
+                get_book_comments(soup)
+                get_book_genre(soup)
+                break
+            except requests.ConnectionError as err:
+                print(f"Ошибка соединения для книги - {book_id} (попытка {attempt+1}/{max_attempts}): {err}")
+                if attempt < max_attempts - 1:
+                    continue
+                else:
+                    raise
+            except requests.RequestException as err:
+                print(f"Ошибка загрузки книги - {book_id}: {err}")
 
 
 if __name__ == "__main__":
