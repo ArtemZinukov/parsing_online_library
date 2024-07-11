@@ -105,8 +105,8 @@ def main():
             download_image(filename, soup)
             get_book_comments(soup)
             get_book_genre(soup)
-        except requests.RequestException:
-            print(f"Ошибка загрузки книги - {book_id}")
+        except requests.RequestException as err:
+            print(f"Ошибка загрузки книги - {book_id}: {err}")
 
 
 if __name__ == "__main__":
