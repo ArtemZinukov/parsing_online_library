@@ -54,7 +54,7 @@ def get_book_comments(soup):
         print(f"Комментарий к книге:\n{comment.find(class_="black").text}")
 
 
-def get_book_genre(soup):
+def get_book_genres(soup):
     book_genres = soup.find_all("span", class_="d_book")
     for genre in book_genres:
         for genre_link in genre.find_all("a"):
@@ -107,7 +107,7 @@ def main():
                 download_txt(URL, book_id, filename, folder='books/')
                 download_image(filename, soup)
                 get_book_comments(soup)
-                get_book_genre(soup)
+                get_book_genres(soup)
                 break
             except requests.ConnectionError as err:
                 print(f"Ошибка соединения для книги - {book_id} (попытка {attempt+1}/{max_attempts}): {err}")
