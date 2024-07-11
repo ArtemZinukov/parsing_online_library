@@ -1,5 +1,7 @@
 import argparse
 import os
+import time
+
 import requests
 from pathlib import Path
 from bs4 import BeautifulSoup
@@ -111,6 +113,7 @@ def main():
             except requests.ConnectionError as err:
                 print(f"Ошибка соединения для книги - {book_id} (попытка {attempt+1}/{max_attempts}): {err}")
                 if attempt < max_attempts - 1:
+                    time.sleep(10)
                     continue
                 else:
                     raise
