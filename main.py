@@ -60,13 +60,18 @@ def get_book_genre(soup):
             print(f"Жанр книги - {genre_link.text}\n")
 
 
-def download_txt(url, filename, folder='books/'):
+def download_txt(url, book_id, filename, folder='books/'):
     if not os.path.exists(folder):
         os.makedirs(folder)
+    download_url = f"{url}/txt.php"
+    params = {
+        "id": book_id,
+    }
     filename = sanitize_filename(filename)
     filepath = os.path.join(folder, f"{filename}.txt")
-    response = requests.get(url)
+    response = requests.get(download_url, params=params)
     response = check_for_redirect(response)
+    print(response.url)
     with open(filepath, 'wb') as file:
         file.write(response.content)
 
@@ -93,16 +98,15 @@ def main():
                         type=int)
     parser_args = parser.parse_args()
     for book_id in range(parser_args.start_id, parser_args.end_id+1):
-        download_url = f"{URL}/txt.php?id={book_id}"
         try:
             soup = fetch_book_page(URL, book_id)
             filename, author = get_author_and_title(soup)
-            download_txt(download_url, filename, folder='books/')
+            download_txt(URL, book_id, filename, folder='books/')
             download_image(filename, soup)
             get_book_comments(soup)
             get_book_genre(soup)
         except requests.RequestException:
-            pass
+            print(f"Ошибка загрузки книги - {book_id}")
 
 
 if __name__ == "__main__":
