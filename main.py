@@ -14,14 +14,12 @@ URL = "https://tululu.org"
 def check_for_redirect(response):
     if response.history:
         raise requests.HTTPError("Redirect")
-    return response
 
 
 def fetch_book_page(url, book_id):
     url_book = f"{url}/b{book_id}/"
     response = requests.get(url_book)
-    response = check_for_redirect(response)
-    response.raise_for_status()
+    check_for_redirect(response)
 
     return BeautifulSoup(response.text, 'lxml')
 
@@ -73,7 +71,7 @@ def download_txt(url, book_id, filename, folder='books/'):
     filename = sanitize_filename(filename)
     filepath = os.path.join(folder, f"{filename}.txt")
     response = requests.get(download_url, params=params)
-    response = check_for_redirect(response)
+    check_for_redirect(response)
     print(response.url)
     with open(filepath, 'wb') as file:
         file.write(response.content)
@@ -86,7 +84,7 @@ def download_image(filename, soup, folder='images/'):
     filepath = os.path.join(folder, f"{filename}.jpg")
     image_url = get_image(soup)
     response = requests.get(image_url)
-    response = check_for_redirect(response)
+    check_for_redirect(response)
 
     with open(filepath, 'wb') as file:
         file.write(response.content)
