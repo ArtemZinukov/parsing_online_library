@@ -77,11 +77,10 @@ def download_txt(url, book_id, filename, folder='books/'):
         file.write(response.content)
 
 
-def download_image(filename, soup, folder='images/'):
+def download_image(filename, image_url, folder='images/'):
     os.makedirs(folder, exist_ok=True)
     filename = sanitize_filename(filename)
     filepath = os.path.join(folder, f"{filename}.jpg")
-    image_url = get_image(soup)
     response = requests.get(image_url)
     check_for_redirect(response)
     response.raise_for_status()
@@ -111,7 +110,8 @@ def main():
                 soup = fetch_book_page(URL, book_id)
                 title, author = get_author_and_title(soup)
                 download_txt(URL, book_id, title, folder='books/')
-                download_image(title, soup)
+                image_url = get_image(soup)
+                download_image(title, image_url)
                 book_comments = get_book_comments(soup)
                 book_genre = get_book_genres(soup)
                 console_output(title, author, book_comments, book_genre)
