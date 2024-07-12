@@ -59,8 +59,7 @@ def get_book_genres(soup):
 
 
 def download_txt(url, book_id, filename, folder='books/'):
-    if not os.path.exists(folder):
-        os.makedirs(folder)
+    os.makedirs(folder, exist_ok=True)
     download_url = f"{url}/txt.php"
     params = {
         "id": book_id,
@@ -75,8 +74,7 @@ def download_txt(url, book_id, filename, folder='books/'):
 
 
 def download_image(filename, soup, folder='images/'):
-    if not os.path.exists(folder):
-        os.makedirs(folder)
+    os.makedirs(folder, exist_ok=True)
     filename = sanitize_filename(filename)
     filepath = os.path.join(folder, f"{filename}.jpg")
     image_url = get_image(soup)
