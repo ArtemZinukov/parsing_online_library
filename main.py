@@ -6,7 +6,7 @@ import requests
 from pathlib import Path
 from bs4 import BeautifulSoup
 from pathvalidate import sanitize_filename
-from urllib.parse import urljoin
+from urllib.parse import urljoin, urlparse
 
 URL = "https://tululu.org"
 
@@ -39,7 +39,10 @@ def get_author_and_title(soup):
 def get_image(soup):
     try:
         content_div = soup.find('div', class_="bookimage").find('a').find("img")
-        image_url = urljoin("https://tululu.org/", content_div["src"])
+        base_url = "https://tululu.org/"
+        relative_url = content_div["src"]
+        relative_url_parts = urlparse(relative_url)
+        image_url = urljoin(base_url, relative_url_parts.path)
         return image_url
     except AttributeError:
         return None
