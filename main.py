@@ -25,27 +25,25 @@ def fetch_book_page(url, book_id):
 
 
 def get_author_and_title(soup):
-    content_div = soup.find('div', {'id': 'content'})
-    if content_div:
-        h1_tag = content_div.find('h1')
-        if h1_tag:
-            text = h1_tag.text
-            text_split = text.split(':')
-            title = text_split[0].strip()
-            author = text_split[2].strip()
-            print(f"Название: {title}\nАвтор: {author}")
-            return title, author
-    return None, None
+    try:
+        content_div = soup.find('div', {'id': 'content'}).find('h1')
+        text = content_div.text
+        text_split = text.split(':')
+        title = text_split[0].strip()
+        author = text_split[2].strip()
+        print(f"Название: {title}\nАвтор: {author}")
+        return title, author
+    except AttributeError:
+        return None, None
 
 
 def get_image(soup):
-    content_div = soup.find('div', class_="bookimage")
-    if content_div:
-        image_tag = content_div.find('a').find("img")
-        if image_tag:
-            image_url = urljoin("https://tululu.org/", image_tag["src"])
-            return image_url
-    return None
+    try:
+        content_div = soup.find('div', class_="bookimage").find('a').find("img")
+        image_url = urljoin("https://tululu.org/", content_div["src"])
+        return image_url
+    except AttributeError:
+        return None
 
 
 def get_book_comments(soup):
