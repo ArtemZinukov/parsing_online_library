@@ -25,27 +25,21 @@ def fetch_book_page(url, book_id):
 
 
 def get_author_and_title(soup):
-    try:
-        content_div = soup.find('div', {'id': 'content'}).find('h1')
-        text = content_div.text
-        text_split = text.split(':')
-        title = text_split[0].strip()
-        author = text_split[2].strip()
-        return title, author
-    except AttributeError:
-        return None, None
+    content_div = soup.find('div', {'id': 'content'}).find('h1')
+    text = content_div.text
+    text_split = text.split(':')
+    title = text_split[0].strip()
+    author = text_split[2].strip()
+    return title, author
 
 
 def get_image(soup):
-    try:
-        content_div = soup.find('div', class_="bookimage").find('a').find("img")
-        base_url = "https://tululu.org/"
-        relative_url = content_div["src"]
-        relative_url_parts = urlparse(relative_url)
-        image_url = urljoin(base_url, relative_url_parts.path)
-        return image_url
-    except AttributeError:
-        return None
+    content_div = soup.find('div', class_="bookimage").find('a').find("img")
+    base_url = "https://tululu.org/"
+    relative_url = content_div["src"]
+    relative_url_parts = urlparse(relative_url)
+    image_url = urljoin(base_url, relative_url_parts.path)
+    return image_url
 
 
 def get_book_comments(soup):
@@ -123,7 +117,7 @@ def main():
                     continue
                 else:
                     raise
-            except requests.RequestException as err:
+            except (AttributeError, requests.RequestException) as err:
                 print(f"Ошибка загрузки книги - {book_id}: {err}")
 
 
