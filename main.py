@@ -43,16 +43,13 @@ def get_image(soup):
 
 
 def get_book_comments(soup):
-    comments = soup.find_all(class_="texts")
-    for comment in comments:
-        return comment.find(class_="black").text
+    return soup.find_all(class_="texts")
 
 
 def get_book_genres(soup):
     book_genres = soup.find_all("span", class_="d_book")
     for genre in book_genres:
-        for genre_link in genre.find_all("a"):
-            return genre_link.text
+        return genre.find_all("a")
 
 
 def download_txt(url, book_id, filename, folder='books/'):
@@ -85,8 +82,12 @@ def download_image(filename, image_url, folder='images/'):
 
 def console_output(title, author, book_comments, book_genre):
     print(f"Название: {title}\nАвтор: {author}")
-    print(f"Жанр книги - {book_genre}\n")
-    print(f"Комментарий к книге:\n{book_comments}")
+    print("Жанр книги: \n")
+    for genre_link in book_genre:
+        print(f"{genre_link.text}\n")
+    print(f"Комментарии к книге: \n")
+    for comment in book_comments:
+        print(f"{comment.find(class_="black").text}")
 
 
 def main():
