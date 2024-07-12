@@ -68,6 +68,7 @@ def download_txt(url, book_id, filename, folder='books/'):
     filepath = os.path.join(folder, f"{filename}.txt")
     response = requests.get(download_url, params=params)
     check_for_redirect(response)
+    response.raise_for_status()
 
     with open(filepath, 'wb') as file:
         file.write(response.content)
@@ -80,6 +81,7 @@ def download_image(filename, soup, folder='images/'):
     image_url = get_image(soup)
     response = requests.get(image_url)
     check_for_redirect(response)
+    response.raise_for_status()
 
     with open(filepath, 'wb') as file:
         file.write(response.content)
