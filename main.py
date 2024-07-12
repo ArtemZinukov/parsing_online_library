@@ -20,7 +20,7 @@ def fetch_book_page(url, book_id):
     url_book = f"{url}/b{book_id}/"
     response = requests.get(url_book)
     check_for_redirect(response)
-
+    response.raise_for_status()
     return BeautifulSoup(response.text, 'lxml')
 
 
