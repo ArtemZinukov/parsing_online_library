@@ -31,7 +31,6 @@ def get_author_and_title(soup):
         text_split = text.split(':')
         title = text_split[0].strip()
         author = text_split[2].strip()
-        print(f"Название: {title}\nАвтор: {author}")
         return title, author
     except AttributeError:
         return None, None
@@ -49,14 +48,14 @@ def get_image(soup):
 def get_book_comments(soup):
     comments = soup.find_all(class_="texts")
     for comment in comments:
-        print(f"Комментарий к книге:\n{comment.find(class_="black").text}")
+        return comment.find(class_="black").text
 
 
 def get_book_genres(soup):
     book_genres = soup.find_all("span", class_="d_book")
     for genre in book_genres:
         for genre_link in genre.find_all("a"):
-            print(f"Жанр книги - {genre_link.text}\n")
+            return genre_link.text
 
 
 def download_txt(url, book_id, filename, folder='books/'):
@@ -70,7 +69,7 @@ def download_txt(url, book_id, filename, folder='books/'):
     filepath = os.path.join(folder, f"{filename}.txt")
     response = requests.get(download_url, params=params)
     check_for_redirect(response)
-    print(response.url)
+
     with open(filepath, 'wb') as file:
         file.write(response.content)
 
@@ -88,6 +87,12 @@ def download_image(filename, soup, folder='images/'):
         file.write(response.content)
 
 
+def console_output(title, author, book_comments, book_genre):
+    print(f"Название: {title}\nАвтор: {author}")
+    print(f"Жанр книги - {book_genre}\n")
+    print(f"Комментарий к книге:\n{book_comments}")
+
+
 def main():
     Path("./books").mkdir(parents=True, exist_ok=True)
     parser = argparse.ArgumentParser(prog='main', description='запускает скрипт для скачивания книг')
@@ -101,11 +106,12 @@ def main():
         for attempt in range(max_attempts):
             try:
                 soup = fetch_book_page(URL, book_id)
-                filename, author = get_author_and_title(soup)
-                download_txt(URL, book_id, filename, folder='books/')
-                download_image(filename, soup)
-                get_book_comments(soup)
-                get_book_genres(soup)
+                title, author = get_author_and_title(soup)
+                download_txt(URL, book_id, title, folder='books/')
+                download_image(title, soup)
+                book_comments = get_book_comments(soup)
+                book_genre = get_book_genres(soup)
+                console_output(title, author, book_comments, book_genre)
                 break
             except requests.ConnectionError as err:
                 print(f"Ошибка соединения для книги - {book_id} (попытка {attempt+1}/{max_attempts}): {err}")
