@@ -35,7 +35,7 @@ def get_author_and_title(soup):
 
 def get_image(soup):
     content_div = soup.find('div', class_="bookimage").find('a').find("img")
-    base_url = "https://tululu.org/"
+    base_url = "https://tululu.org/shots/"
     relative_url = content_div["src"]
     relative_url_parts = urlparse(relative_url)
     image_url = urljoin(base_url, relative_url_parts.path)
