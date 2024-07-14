@@ -33,9 +33,9 @@ def get_author_and_title(soup):
     return title, author
 
 
-def get_image(soup):
+def get_image(soup, book_id):
     content_div = soup.find('div', class_="bookimage").find('a').find("img")
-    base_url = "https://tululu.org/shots/"
+    base_url = f"https://tululu.org/b{book_id}/"
     relative_url = content_div["src"]
     relative_url_parts = urlparse(relative_url)
     image_url = urljoin(base_url, relative_url_parts.path)
@@ -103,7 +103,7 @@ def main():
                 soup = fetch_book_page(URL, book_id)
                 title, author = get_author_and_title(soup)
                 download_txt(URL, book_id, title, folder='books/')
-                image_url = get_image(soup)
+                image_url = get_image(soup, book_id)
                 download_image(title, image_url)
                 book_comments = get_book_comments(soup)
                 book_genres = get_book_genres(soup)
