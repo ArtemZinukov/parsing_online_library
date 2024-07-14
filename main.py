@@ -108,8 +108,8 @@ def main():
                 image_url = get_image(soup)
                 download_image(title, image_url)
                 book_comments = get_book_comments(soup)
-                book_genre = get_book_genres(soup)
-                console_output(title, author, book_comments, book_genre)
+                book_genres = get_book_genres(soup)
+                console_output(title, author, book_comments, book_genres)
                 break
             except requests.ConnectionError as err:
                 print(f"Ошибка соединения для книги - {book_id} (попытка {attempt+1}/{max_attempts}): {err}")
