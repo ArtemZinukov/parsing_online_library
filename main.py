@@ -97,8 +97,8 @@ def main():
                         type=int)
     parser_args = parser.parse_args()
     for book_id in range(parser_args.start_id, parser_args.end_id+1):
-        max_attempts = 3
-        for attempt in range(max_attempts):
+        attempt = 0
+        while True:
             try:
                 soup = fetch_book_page(URL, book_id)
                 title, author = get_author_and_title(soup)
@@ -110,12 +110,9 @@ def main():
                 console_output(title, author, book_comments, book_genres)
                 break
             except requests.ConnectionError as err:
-                print(f"Ошибка соединения для книги - {book_id} (попытка {attempt+1}/{max_attempts}): {err}")
-                if attempt < max_attempts - 1:
-                    time.sleep(10)
-                    continue
-                else:
-                    raise
+                print(f"Ошибка соединения для книги - {book_id} (попытка {attempt+1}): {err}")
+                time.sleep(10)
+                attempt += 1
             except (AttributeError, requests.RequestException) as err:
                 print(f"Ошибка загрузки книги - {book_id}: {err}")
 
