@@ -47,7 +47,7 @@ def get_image(soup, book_id):
     relative_url = content_div["src"]
     relative_url_parts = urlparse(relative_url)
     image_url = urljoin(base_url, relative_url_parts.path)
-    return image_url
+    return image_url, relative_url_parts.path
 
 
 def get_book_comments(soup):
@@ -104,11 +104,12 @@ def download_all_book(book_ids):
             soup = fetch_book_page(URL, book_id)
             title, author = get_author_and_title(soup)
             download_txt(URL, book_id, title, folder='books/')
-            image_url = get_image(soup, book_id)
+            image_url, relative_url = get_image(soup, book_id)
             download_image(title, image_url)
             book_comments = get_book_comments(soup)
             book_genres = get_book_genres(soup)
             console_output(title, author, book_comments, book_genres)
+            create_json_output(title, author, relative_url, book_comments, book_genres)
         except (AttributeError, requests.RequestException) as err:
             print(f"Ошибка загрузки книги - {book_id}: {err}")
 
@@ -121,6 +122,20 @@ def console_output(title, author, book_comments, book_genres):
     print(f"\nКомментарии к книге: ")
     for comment in book_comments:
         print(f"{comment.find(class_="black").text}")
+
+
+def create_json_output(title, author, image_url, book_comments, book_genres):
+    books_info = {
+        "title": title,
+        "author": author,
+        "img_src": image_url,
+        "comments": [str(f"{comment.find(class_="black").text}") for comment in book_comments],
+        "genres": [str(f"{genre.text}") for genre in book_genres]
+    }
+    books_info_json = json.dumps(books_info, ensure_ascii=False, indent=4)
+
+    with open("books_info.json", "a", encoding='utf8') as my_file:
+        my_file.write(books_info_json)
 
 
 def main():
