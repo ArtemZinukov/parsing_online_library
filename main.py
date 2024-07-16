@@ -144,9 +144,9 @@ def main():
                         type=int)
     parser.add_argument('--end_id', default=11, help="Укажите конечный ID книги для скачивания",
                         type=int)
-    parser.add_argument('--start_page', help="Укажите начальную страницу с книгами для скачивания",
+    parser.add_argument('--start_page', default=698, help="Укажите начальную страницу с книгами для скачивания",
                         type=int)
-    parser.add_argument('--end_page', help="Укажите конечную страницу с книгами для скачивания",
+    parser.add_argument('--end_page', default=702, help="Укажите конечную страницу с книгами для скачивания",
                         type=int)
     parser_args = parser.parse_args()
     # for book_id in range(parser_args.start_id, parser_args.end_id+1):
