@@ -33,7 +33,7 @@ def fetch_books_by_genre(page):
 
 
 def get_author_and_title(soup):
-    content_div = soup.find('div', {'id': 'content'}).find('h1')
+    content_div = soup.select_one("#content h1")
     text = content_div.text
     text_split = text.split(':')
     title = text_split[0].strip()
@@ -42,7 +42,8 @@ def get_author_and_title(soup):
 
 
 def get_image(soup, book_id):
-    content_div = soup.find('div', class_="bookimage").find('a').find("img")
+    selector = ".bookimage a img"
+    content_div = soup.select_one(selector)
     base_url = f"https://tululu.org/b{book_id}/"
     relative_url = content_div["src"]
     relative_url_parts = urlparse(relative_url)
@@ -51,11 +52,11 @@ def get_image(soup, book_id):
 
 
 def get_book_comments(soup):
-    return soup.find_all(class_="texts")
+    return soup.select(".texts .black")
 
 
 def get_book_genres(soup):
-    return soup.find("span", class_="d_book").find_all("a")
+    return soup.select("span.d_book a")
 
 
 def download_txt(url, book_id, filename, folder='books/'):
@@ -87,11 +88,9 @@ def download_image(filename, image_url, folder='images/'):
 
 
 def download_book_from_page(soup):
-    content_div = soup.find_all('div', class_="bookimage")
+    content_div = soup.select(".bookimage a")
     book_ids = []
-    for book_div in content_div:
-        content = book_div.find("a")
-
+    for content in content_div:
         relative_url = content["href"]
         relative_url_parts = urlparse(relative_url)
         book_ids.append(relative_url_parts.path.split("/b")[1])
@@ -121,7 +120,7 @@ def console_output(title, author, book_comments, book_genres):
         print(f"{genre_link.text}")
     print(f"\nКомментарии к книге: ")
     for comment in book_comments:
-        print(f"{comment.find(class_="black").text}")
+        print(f"{comment.text}")
 
 
 def create_json_output(title, author, image_url, book_comments, book_genres):
@@ -129,7 +128,7 @@ def create_json_output(title, author, image_url, book_comments, book_genres):
         "title": title,
         "author": author,
         "img_src": image_url,
-        "comments": [str(f"{comment.find(class_="black").text}") for comment in book_comments],
+        "comments": [str(f"{comment.text}") for comment in book_comments],
         "genres": [str(f"{genre.text}") for genre in book_genres]
     }
     books_info_json = json.dumps(books_info, ensure_ascii=False, indent=4)
@@ -150,26 +149,26 @@ def main():
     parser.add_argument('--end_page', help="Укажите конечную страницу с книгами для скачивания",
                         type=int)
     parser_args = parser.parse_args()
-    for book_id in range(parser_args.start_id, parser_args.end_id+1):
-        attempt = 0
-        while True:
-            try:
-                soup = fetch_book_page(URL, book_id)
-                title, author = get_author_and_title(soup)
-                download_txt(URL, book_id, title, folder='books/')
-                image_url = get_image(soup, book_id)
-                download_image(title, image_url)
-                book_comments = get_book_comments(soup)
-                book_genres = get_book_genres(soup)
-                console_output(title, author, book_comments, book_genres)
-                break
-            except requests.ConnectionError as err:
-                print(f"Ошибка соединения для книги - {book_id} (попытка {attempt+1}): {err}")
-                time.sleep(10)
-                attempt += 1
-            except (AttributeError, requests.RequestException) as err:
-                print(f"Ошибка загрузки книги - {book_id}: {err}")
-                break
+    # for book_id in range(parser_args.start_id, parser_args.end_id+1):
+    #     attempt = 0
+    #     while True:
+    #         try:
+    #             soup = fetch_book_page(URL, book_id)
+    #             title, author = get_author_and_title(soup)
+    #             download_txt(URL, book_id, title, folder='books/')
+    #             image_url = get_image(soup, book_id)
+    #             download_image(title, image_url)
+    #             book_comments = get_book_comments(soup)
+    #             book_genres = get_book_genres(soup)
+    #             console_output(title, author, book_comments, book_genres)
+    #             break
+    #         except requests.ConnectionError as err:
+    #             print(f"Ошибка соединения для книги - {book_id} (попытка {attempt+1}): {err}")
+    #             time.sleep(10)
+    #             attempt += 1
+    #         except (AttributeError, requests.RequestException) as err:
+    #             print(f"Ошибка загрузки книги - {book_id}: {err}")
+    #             break
     for book_page in range(parser_args.start_page, parser_args.end_page):
         attempt = 0
         while True:
