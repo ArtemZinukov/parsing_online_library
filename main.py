@@ -97,18 +97,22 @@ def download_book_from_page(soup):
     return book_ids
 
 
-def download_all_book(book_ids):
+def download_all_book(book_ids, dest_folder, skip_txt=False, skip_imgs=False):
     for book_id in book_ids:
         try:
             soup = fetch_book_page(URL, book_id)
             title, author = get_author_and_title(soup)
-            download_txt(URL, book_id, title, folder='books/')
-            image_url, relative_url = get_image(soup, book_id)
-            download_image(title, image_url)
+            if not skip_txt:
+                download_txt(URL, book_id, title, folder=dest_folder)
+            if not skip_imgs:
+                image_url, relative_url = get_image(soup, book_id)
+                download_image(title, image_url, folder=dest_folder)
+            else:
+                relative_url = ''
             book_comments = get_book_comments(soup)
             book_genres = get_book_genres(soup)
             console_output(title, author, book_comments, book_genres)
-            create_json_output(title, author, relative_url, book_comments, book_genres)
+            create_json_output(title, author, relative_url, book_comments, book_genres, folder=dest_folder)
         except (AttributeError, requests.RequestException) as err:
             print(f"Ошибка загрузки книги - {book_id}: {err}")
 
@@ -123,7 +127,7 @@ def console_output(title, author, book_comments, book_genres):
         print(f"{comment.text}")
 
 
-def create_json_output(title, author, image_url, book_comments, book_genres):
+def create_json_output(title, author, image_url, book_comments, book_genres, folder=None):
     books_info = {
         "title": title,
         "author": author,
@@ -132,55 +136,73 @@ def create_json_output(title, author, image_url, book_comments, book_genres):
         "genres": [str(f"{genre.text}") for genre in book_genres]
     }
     books_info_json = json.dumps(books_info, ensure_ascii=False, indent=4)
-
-    with open("books_info.json", "a", encoding='utf8') as my_file:
+    filepath = os.path.join(folder, "books_info.json")
+    with open(filepath, "a", encoding='utf8') as my_file:
         my_file.write(books_info_json)
+
+
+def create_parser():
+    parser = argparse.ArgumentParser(prog='main', description='запускает скрипт для скачивания книг')
+    parser.add_argument('--start_id', help="Укажите начальный ID книги для скачивания",
+                        type=int)
+    parser.add_argument('--end_id', help="Укажите конечный ID книги для скачивания",
+                        type=int)
+    parser.add_argument('--start_page', default=700, help="Укажите начальную страницу с книгами для скачивания",
+                        type=int)
+    parser.add_argument('--end_page', default=702, help="Укажите конечную страницу с книгами для скачивания",
+                        type=int)
+    parser.add_argument('--dest_folder', help="Выведет путь к каталогу с результатами",
+                        type=str, default='books/')
+    parser.add_argument('--skip_imgs', help="Для того,чтобы не скачивать картинки",
+                        action='store_const', const=True)
+    parser.add_argument('--skip_txt', help="Для того,чтобы не скачивать текст",
+                        action='store_const', const=True)
+    return parser
 
 
 def main():
     Path("./books").mkdir(parents=True, exist_ok=True)
-    parser = argparse.ArgumentParser(prog='main', description='запускает скрипт для скачивания книг')
-    parser.add_argument('--start_id', default=1, help="Укажите начальный ID книги для скачивания",
-                        type=int)
-    parser.add_argument('--end_id', default=11, help="Укажите конечный ID книги для скачивания",
-                        type=int)
-    parser.add_argument('--start_page', default=698, help="Укажите начальную страницу с книгами для скачивания",
-                        type=int)
-    parser.add_argument('--end_page', default=702, help="Укажите конечную страницу с книгами для скачивания",
-                        type=int)
+    parser = create_parser()
     parser_args = parser.parse_args()
-    # for book_id in range(parser_args.start_id, parser_args.end_id+1):
-    #     attempt = 0
-    #     while True:
-    #         try:
-    #             soup = fetch_book_page(URL, book_id)
-    #             title, author = get_author_and_title(soup)
-    #             download_txt(URL, book_id, title, folder='books/')
-    #             image_url = get_image(soup, book_id)
-    #             download_image(title, image_url)
-    #             book_comments = get_book_comments(soup)
-    #             book_genres = get_book_genres(soup)
-    #             console_output(title, author, book_comments, book_genres)
-    #             break
-    #         except requests.ConnectionError as err:
-    #             print(f"Ошибка соединения для книги - {book_id} (попытка {attempt+1}): {err}")
-    #             time.sleep(10)
-    #             attempt += 1
-    #         except (AttributeError, requests.RequestException) as err:
-    #             print(f"Ошибка загрузки книги - {book_id}: {err}")
-    #             break
-    for book_page in range(parser_args.start_page, parser_args.end_page):
-        attempt = 0
-        while True:
-            try:
-                soup = fetch_books_by_genre(book_page)
-                book_ids = download_book_from_page(soup)
-                download_all_book(book_ids)
-                break
-            except requests.ConnectionError as err:
-                print(f"Ошибка соединения для книги - {book_page} (попытка {attempt + 1}): {err}")
-                time.sleep(10)
-                attempt += 1
+    if parser_args.start_id and parser_args.end_id:
+        for book_id in range(parser_args.start_id, parser_args.end_id+1):
+            attempt = 0
+            while True:
+                try:
+                    soup = fetch_book_page(URL, book_id)
+                    title, author = get_author_and_title(soup)
+                    if not parser_args.skip_txt:
+                        download_txt(URL, book_id, title, folder=parser_args.dest_folder)
+                    if not parser_args.skip_imgs:
+                        image_url = get_image(soup, book_id)
+                        download_image(title, image_url, folder=parser_args.dest_folder)
+                    book_comments = get_book_comments(soup)
+                    book_genres = get_book_genres(soup)
+                    console_output(title, author, book_comments, book_genres)
+                    break
+                except requests.ConnectionError as err:
+                    print(f"Ошибка соединения для книги - {book_id} (попытка {attempt+1}): {err}")
+                    time.sleep(10)
+                    attempt += 1
+                except (AttributeError, requests.RequestException) as err:
+                    print(f"Ошибка загрузки книги - {book_id}: {err}")
+                    break
+    elif parser_args.start_page and parser_args.end_page:
+        for book_page in range(parser_args.start_page, parser_args.end_page):
+            attempt = 0
+            while True:
+                try:
+                    soup = fetch_books_by_genre(book_page)
+                    book_ids = download_book_from_page(soup)
+                    download_all_book(book_ids, skip_txt=parser_args.skip_txt, skip_imgs=parser_args.skip_imgs,
+                                      dest_folder=parser_args.dest_folder)
+                    break
+                except requests.ConnectionError as err:
+                    print(f"Ошибка соединения для книги - {book_page} (попытка {attempt + 1}): {err}")
+                    time.sleep(10)
+                    attempt += 1
+    if parser_args.dest_folder:
+        print(f"Результаты хранятся в каталоге: {parser_args.dest_folder}")
 
 
 if __name__ == "__main__":
