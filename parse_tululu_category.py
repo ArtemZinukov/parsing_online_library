@@ -113,6 +113,17 @@ def download_all_book(book_id, dest_folder, skip_txt=False, skip_imgs=False):
     return title, author, relative_url, book_comments, book_genres
 
 
+def parse_book_page(title, author, relative_url, book_comments, book_genres):
+    book_details = {
+        "title": title,
+        "author": author,
+        "img_src": relative_url,
+        "comments": [str(f"{comment.text}") for comment in book_comments],
+        "genres": [str(f"{genre.text}") for genre in book_genres]
+    }
+    return book_details
+
+
 def console_output(title, author, book_comments, book_genres):
     print(f"Название: {title}\nАвтор: {author}")
     print("\nЖанр книги: ")
@@ -125,8 +136,8 @@ def console_output(title, author, book_comments, book_genres):
 
 def create_json_output(books_info, folder=None):
     filepath = os.path.join(folder, "books_info.json")
-    with open(filepath, "w", encoding='utf8') as my_file:
-        json.dump(books_info, my_file, ensure_ascii=False, indent=4)
+    with open(filepath, "w", encoding='utf8') as file:
+        json.dump(books_info, file, ensure_ascii=False, indent=4)
 
 
 def create_parser():
@@ -163,13 +174,7 @@ def main():
                                 download_all_book(book_id, skip_txt=parser_args.skip_txt,
                                                   skip_imgs=parser_args.skip_imgs,
                                                   dest_folder=parser_args.dest_folder))
-                            book_details = {
-                                "title": title,
-                                "author": author,
-                                "img_src": relative_url,
-                                "comments": [str(f"{comment.text}") for comment in book_comments],
-                                "genres": [str(f"{genre.text}") for genre in book_genres]
-                            }
+                            book_details = parse_book_page(title, author, relative_url, book_comments, book_genres)
                             books_details.append(book_details)
                         except (AttributeError, requests.RequestException) as err:
                             print(f"Ошибка загрузки книги - {book_id}: {err}")
