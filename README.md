@@ -26,11 +26,11 @@ Python3 должен быть уже установлен. «атем используйте pip (или pip3, если есть к
 
 ≈сли необходимо скачать сразу много страниц с книгами:
 
-```python main.py "указать диапозон страниц"```
+```python parse_tululu_category.py "указать диапозон страниц"```
 
 Ќапример:
 
-```python main.py --start_page 20 --endpage 30```
+```python parse_tululu_category.py --start_page 20 --endpage 30```
 - данна€ команда произведет загрузку книг со страницы 20 до 29 включительно.
 - если не указать параметр --endpage, то книги загруз€тс€ с 20 и по последнюю страницу(701)
 
@@ -41,14 +41,20 @@ Python3 должен быть уже установлен. «атем используйте pip (или pip3, если есть к
 
 Ќапример:
 
-```python main.py --start_page 20 --endpage 30 --skip_imgs```
+```python parse_tululu_category.py --start_page 20 --endpage 30 --skip_imgs```
 команда скачать все книги с 20 по 29 страницу, но не загрузит картинки дл€ них
 
-```python main.py --start_page 20 --endpage 30 --skip_txt```
+```python parse_tululu_category.py --start_page 20 --endpage 30 --skip_txt```
 команда скачать всю информацию о книгах с 20 по 29 страницу, но сам текст скачан не будет
 
-```python main.py --start_page 20 --endpage 30 --dest_folder boooks/```
+```python parse_tululu_category.py --start_page 20 --endpage 30 --dest_folder boooks/```
 команда скачать все книги с 20 по 29 страницу и загрузить их в указанную вами папку boooks(default=books)
+
+“акие же параметры можно использовать и с файлом main дл€ этого вместо parse_tululu_category.py прописать main.py
+
+Ќапример:
+
+```python main.py --start_page 20 --endpage 30 --skip_imgs```
 
 ## ÷ель проекта
 

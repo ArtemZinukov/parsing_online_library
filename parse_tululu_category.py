@@ -109,7 +109,6 @@ def download_all_book(book_id, dest_folder, skip_txt=False, skip_imgs=False):
         relative_url = ''
     book_comments = get_book_comments(soup)
     book_genres = get_book_genres(soup)
-    console_output(title, author, book_comments, book_genres)
     return title, author, relative_url, book_comments, book_genres
 
 
@@ -176,6 +175,7 @@ def main():
                                                   dest_folder=parser_args.dest_folder))
                             book_details = parse_book_page(title, author, relative_url, book_comments, book_genres)
                             books_details.append(book_details)
+                            console_output(title, author, book_comments, book_genres)
                         except (AttributeError, requests.RequestException) as err:
                             print(f"Ошибка загрузки книги - {book_id}: {err}")
 
