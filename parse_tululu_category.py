@@ -149,7 +149,7 @@ def main():
     Path("./books").mkdir(parents=True, exist_ok=True)
     parser = create_parser()
     parser_args = parser.parse_args()
-    books_data = []
+    books_details = []
     if parser_args.start_page and parser_args.end_page:
         for book_page in range(parser_args.start_page, parser_args.end_page):
             attempt = 0
@@ -163,14 +163,14 @@ def main():
                                 download_all_book(book_id, skip_txt=parser_args.skip_txt,
                                                   skip_imgs=parser_args.skip_imgs,
                                                   dest_folder=parser_args.dest_folder))
-                            book_data = {
+                            book_details = {
                                 "title": title,
                                 "author": author,
                                 "img_src": relative_url,
                                 "comments": [str(f"{comment.text}") for comment in book_comments],
                                 "genres": [str(f"{genre.text}") for genre in book_genres]
                             }
-                            books_data.append(book_data)
+                            books_details.append(book_details)
                         except (AttributeError, requests.RequestException) as err:
                             print(f"Ошибка загрузки книги - {book_id}: {err}")
 
@@ -179,7 +179,7 @@ def main():
                     print(f"Ошибка соединения для книги - {book_page} (попытка {attempt + 1}): {err}")
                     time.sleep(10)
                     attempt += 1
-    create_json_output(books_data, folder=parser_args.dest_folder)
+    create_json_output(books_details, folder=parser_args.dest_folder)
     if parser_args.dest_folder:
         print(f"Результаты хранятся в каталоге: {parser_args.dest_folder}")
 
