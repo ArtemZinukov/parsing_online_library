@@ -97,24 +97,20 @@ def extract_book_ids(soup):
     return book_ids
 
 
-def download_all_book(book_ids, dest_folder, skip_txt=False, skip_imgs=False):
-    for book_id in book_ids:
-        try:
-            soup = fetch_book_page(URL, book_id)
-            title, author = get_author_and_title(soup)
-            if not skip_txt:
-                download_txt(URL, book_id, title, folder=dest_folder)
-            if not skip_imgs:
-                image_url, relative_url = get_image(soup, book_id)
-                download_image(title, image_url, folder=dest_folder)
-            else:
-                relative_url = ''
-            book_comments = get_book_comments(soup)
-            book_genres = get_book_genres(soup)
-            console_output(title, author, book_comments, book_genres)
-            create_json_output(title, author, relative_url, book_comments, book_genres, folder=dest_folder)
-        except (AttributeError, requests.RequestException) as err:
-            print(f"Ошибка загрузки книги - {book_id}: {err}")
+def download_all_book(book_id, dest_folder, skip_txt=False, skip_imgs=False):
+    soup = fetch_book_page(URL, book_id)
+    title, author = get_author_and_title(soup)
+    if not skip_txt:
+        download_txt(URL, book_id, title, folder=dest_folder)
+    if not skip_imgs:
+        image_url, relative_url = get_image(soup, book_id)
+        download_image(title, image_url, folder=dest_folder)
+    else:
+        relative_url = ''
+    book_comments = get_book_comments(soup)
+    book_genres = get_book_genres(soup)
+    console_output(title, author, book_comments, book_genres)
+    create_json_output(title, author, relative_url, book_comments, book_genres, folder=dest_folder)
 
 
 def console_output(title, author, book_comments, book_genres):
@@ -168,8 +164,12 @@ def main():
                 try:
                     soup = fetch_catalog_page(book_page)
                     book_ids = extract_book_ids(soup)
-                    download_all_book(book_ids, skip_txt=parser_args.skip_txt, skip_imgs=parser_args.skip_imgs,
-                                      dest_folder=parser_args.dest_folder)
+                    for book_id in book_ids:
+                        try:
+                            download_all_book(book_id, skip_txt=parser_args.skip_txt, skip_imgs=parser_args.skip_imgs,
+                                              dest_folder=parser_args.dest_folder)
+                        except (AttributeError, requests.RequestException) as err:
+                            print(f"Ошибка загрузки книги - {book_id}: {err}")
                     break
                 except requests.ConnectionError as err:
                     print(f"Ошибка соединения для книги - {book_page} (попытка {attempt + 1}): {err}")
