@@ -110,7 +110,7 @@ def download_all_book(book_id, dest_folder, skip_txt=False, skip_imgs=False):
     book_comments = get_book_comments(soup)
     book_genres = get_book_genres(soup)
     console_output(title, author, book_comments, book_genres)
-    create_json_output(title, author, relative_url, book_comments, book_genres, folder=dest_folder)
+    return title, author, relative_url, book_comments, book_genres
 
 
 def console_output(title, author, book_comments, book_genres):
@@ -123,18 +123,10 @@ def console_output(title, author, book_comments, book_genres):
         print(f"{comment.text}")
 
 
-def create_json_output(title, author, image_url, book_comments, book_genres, folder=None):
-    books_info = {
-        "title": title,
-        "author": author,
-        "img_src": image_url,
-        "comments": [str(f"{comment.text}") for comment in book_comments],
-        "genres": [str(f"{genre.text}") for genre in book_genres]
-    }
-    books_info_json = json.dumps(books_info, ensure_ascii=False, indent=4)
+def create_json_output(books_info, folder=None):
     filepath = os.path.join(folder, "books_info.json")
-    with open(filepath, "a", encoding='utf8') as my_file:
-        my_file.write(books_info_json)
+    with open(filepath, "w", encoding='utf8') as my_file:
+        json.dump(books_info, my_file, ensure_ascii=False, indent=4)
 
 
 def create_parser():
@@ -157,6 +149,7 @@ def main():
     Path("./books").mkdir(parents=True, exist_ok=True)
     parser = create_parser()
     parser_args = parser.parse_args()
+    books_data = []
     if parser_args.start_page and parser_args.end_page:
         for book_page in range(parser_args.start_page, parser_args.end_page):
             attempt = 0
@@ -166,15 +159,27 @@ def main():
                     book_ids = extract_book_ids(soup)
                     for book_id in book_ids:
                         try:
-                            download_all_book(book_id, skip_txt=parser_args.skip_txt, skip_imgs=parser_args.skip_imgs,
-                                              dest_folder=parser_args.dest_folder)
+                            title, author, relative_url, book_comments, book_genres = (
+                                download_all_book(book_id, skip_txt=parser_args.skip_txt,
+                                                  skip_imgs=parser_args.skip_imgs,
+                                                  dest_folder=parser_args.dest_folder))
+                            book_data = {
+                                "title": title,
+                                "author": author,
+                                "img_src": relative_url,
+                                "comments": [str(f"{comment.text}") for comment in book_comments],
+                                "genres": [str(f"{genre.text}") for genre in book_genres]
+                            }
+                            books_data.append(book_data)
                         except (AttributeError, requests.RequestException) as err:
                             print(f"Ошибка загрузки книги - {book_id}: {err}")
+
                     break
                 except requests.ConnectionError as err:
                     print(f"Ошибка соединения для книги - {book_page} (попытка {attempt + 1}): {err}")
                     time.sleep(10)
                     attempt += 1
+    create_json_output(books_data, folder=parser_args.dest_folder)
     if parser_args.dest_folder:
         print(f"Результаты хранятся в каталоге: {parser_args.dest_folder}")
 
