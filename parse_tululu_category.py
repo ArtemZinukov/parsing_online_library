@@ -43,10 +43,6 @@ def download_book(book_id, dest_folder, skip_txt=False, skip_imgs=False):
         relative_url = ''
     book_comments = get_book_comments(soup)
     book_genres = get_book_genres(soup)
-    return title, author, relative_url, book_comments, book_genres
-
-
-def parse_book_page(title, author, relative_url, book_comments, book_genres):
     book_details = {
         "title": title,
         "author": author,
@@ -54,7 +50,7 @@ def parse_book_page(title, author, relative_url, book_comments, book_genres):
         "comments": [str(f"{comment.text}") for comment in book_comments],
         "genres": [str(f"{genre.text}") for genre in book_genres]
     }
-    return book_details
+    return title, author, relative_url, book_comments, book_genres, book_details
 
 
 def console_output(title, author, book_comments, book_genres):
@@ -102,21 +98,26 @@ def main():
                 book_ids = extract_book_ids(soup)
                 for book_id in book_ids:
                     try:
-                        title, author, relative_url, book_comments, book_genres = (
+                        title, author, relative_url, book_comments, book_genres, book_details = (
                             download_book(book_id, skip_txt=parser_args.skip_txt,
                                           skip_imgs=parser_args.skip_imgs,
                                           dest_folder=parser_args.dest_folder))
-                        book_details = parse_book_page(title, author, relative_url, book_comments, book_genres)
                         books_details.append(book_details)
                         console_output(title, author, book_comments, book_genres)
+                    except requests.ConnectionError as err:
+                        print(f"Ошибка соединения для книги - {book_page} (попытка {attempt + 1}): {err}")
+                        time.sleep(10)
+                        attempt += 1
                     except (AttributeError, requests.RequestException) as err:
                         print(f"Ошибка загрузки книги - {book_id}: {err}")
-
-                break
+                        break
             except requests.ConnectionError as err:
                 print(f"Ошибка соединения для книги - {book_page} (попытка {attempt + 1}): {err}")
                 time.sleep(10)
                 attempt += 1
+            except (AttributeError, requests.RequestException) as err:
+                print(f"Ошибка загрузки книги - {book_page}: {err}")
+                break
     create_json_output(books_details, folder=parser_args.dest_folder)
     print(f"Результаты хранятся в каталоге: {parser_args.dest_folder}")
 
