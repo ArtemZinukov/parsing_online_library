@@ -100,7 +100,7 @@ def console_output(title, author, book_comments, book_genres):
 
 
 def create_parser():
-    parser = argparse.ArgumentParser(prog='main', description='запускает скрипт для скачивания книг')
+    parser = argparse.ArgumentParser(prog='parse_tululu_book', description='запускает скрипт для скачивания книг')
     parser.add_argument('--start_id', help="Укажите начальный ID книги для скачивания",
                         type=int)
     parser.add_argument('--end_id', help="Укажите конечный ID книги для скачивания",
