@@ -185,8 +185,7 @@ def main():
                     time.sleep(10)
                     attempt += 1
     create_json_output(books_details, folder=parser_args.dest_folder)
-    if parser_args.dest_folder:
-        print(f"Результаты хранятся в каталоге: {parser_args.dest_folder}")
+    print(f"Результаты хранятся в каталоге: {parser_args.dest_folder}")
 
 
 if __name__ == "__main__":

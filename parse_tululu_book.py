@@ -140,8 +140,7 @@ def main():
             except (AttributeError, requests.RequestException) as err:
                 print(f"Ошибка загрузки книги - {book_id}: {err}")
                 break
-    if parser_args.dest_folder:
-        print(f"Результаты хранятся в каталоге: {parser_args.dest_folder}")
+    print(f"Результаты хранятся в каталоге: {parser_args.dest_folder}")
 
 
 if __name__ == "__main__":
