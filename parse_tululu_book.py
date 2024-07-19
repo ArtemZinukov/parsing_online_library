@@ -79,16 +79,6 @@ def download_image(filename, image_url, folder='images/'):
         file.write(response.content)
 
 
-def download_book_from_page(soup):
-    content_div = soup.select(".bookimage a")
-    book_ids = []
-    for content in content_div:
-        relative_url = content["href"]
-        relative_url_parts = urlparse(relative_url)
-        book_ids.append(relative_url_parts.path.split("/b")[1])
-    return book_ids
-
-
 def console_output(title, author, book_comments, book_genres):
     print(f"Название: {title}\nАвтор: {author}")
     print("\nЖанр книги: ")
