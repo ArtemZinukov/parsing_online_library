@@ -93,30 +93,29 @@ def main():
     parser = create_parser()
     parser_args = parser.parse_args()
     books_details = []
-    if parser_args.start_page and parser_args.end_page:
-        for book_page in range(parser_args.start_page, parser_args.end_page):
-            attempt = 0
-            while True:
-                try:
-                    soup = fetch_catalog_page(book_page)
-                    book_ids = extract_book_ids(soup)
-                    for book_id in book_ids:
-                        try:
-                            title, author, relative_url, book_comments, book_genres = (
-                                download_all_book(book_id, skip_txt=parser_args.skip_txt,
-                                                  skip_imgs=parser_args.skip_imgs,
-                                                  dest_folder=parser_args.dest_folder))
-                            book_details = parse_book_page(title, author, relative_url, book_comments, book_genres)
-                            books_details.append(book_details)
-                            console_output(title, author, book_comments, book_genres)
-                        except (AttributeError, requests.RequestException) as err:
-                            print(f"Ошибка загрузки книги - {book_id}: {err}")
+    for book_page in range(parser_args.start_page, parser_args.end_page):
+        attempt = 0
+        while True:
+            try:
+                soup = fetch_catalog_page(book_page)
+                book_ids = extract_book_ids(soup)
+                for book_id in book_ids:
+                    try:
+                        title, author, relative_url, book_comments, book_genres = (
+                            download_all_book(book_id, skip_txt=parser_args.skip_txt,
+                                              skip_imgs=parser_args.skip_imgs,
+                                              dest_folder=parser_args.dest_folder))
+                        book_details = parse_book_page(title, author, relative_url, book_comments, book_genres)
+                        books_details.append(book_details)
+                        console_output(title, author, book_comments, book_genres)
+                    except (AttributeError, requests.RequestException) as err:
+                        print(f"Ошибка загрузки книги - {book_id}: {err}")
 
-                    break
-                except requests.ConnectionError as err:
-                    print(f"Ошибка соединения для книги - {book_page} (попытка {attempt + 1}): {err}")
-                    time.sleep(10)
-                    attempt += 1
+                break
+            except requests.ConnectionError as err:
+                print(f"Ошибка соединения для книги - {book_page} (попытка {attempt + 1}): {err}")
+                time.sleep(10)
+                attempt += 1
     create_json_output(books_details, folder=parser_args.dest_folder)
     print(f"Результаты хранятся в каталоге: {parser_args.dest_folder}")
 
