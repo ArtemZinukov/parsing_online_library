@@ -50,7 +50,7 @@ Python3 должен быть уже установлен. Затем используйте pip (или pip3, если есть к
 ```python parse_tululu_category.py --start_page 20 --endpage 30 --dest_folder boooks/```
 команда скачать все книги с 20 по 29 страницу и загрузить их в указанную вами папку boooks(default=books)
 
-Такие же параметры можно использовать и с файлом main для этого вместо parse_tululu_category.py прописать main.py
+Такие же параметры можно использовать и с файлом parse_tululu_book для этого вместо parse_tululu_category.py прописать parse_tululu_book.py
 
 Например:
 
