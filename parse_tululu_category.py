@@ -5,9 +5,8 @@ import json
 
 import requests
 from pathlib import Path
-from bs4 import BeautifulSoup
 from urllib.parse import urlparse
-from tululu_parsing_functions import check_for_redirect, fetch_page, get_author_and_title, get_image
+from tululu_parsing_functions import fetch_page, get_author_and_title, get_image
 from tululu_parsing_functions import get_book_comments, get_book_genres, download_txt, download_image
 
 URL = "https://tululu.org"
