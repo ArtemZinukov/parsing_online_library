@@ -3,7 +3,7 @@ import time
 
 import requests
 from pathlib import Path
-from tululu_parsing_functions import fetch_book_page, get_author_and_title, get_image
+from tululu_parsing_functions import fetch_page, get_author_and_title, get_image
 from tululu_parsing_functions import get_book_comments, get_book_genres, download_txt, download_image
 
 URL = "https://tululu.org"
@@ -42,7 +42,8 @@ def main():
         attempt = 0
         while True:
             try:
-                soup = fetch_book_page(URL, book_id)
+                url_book = f"{URL}/b{book_id}/"
+                soup = fetch_page(url_book)
                 title, author = get_author_and_title(soup)
                 if not parser_args.skip_txt:
                     download_txt(URL, book_id, title, folder=parser_args.dest_folder)

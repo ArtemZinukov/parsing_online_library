@@ -11,9 +11,8 @@ def check_for_redirect(response):
         raise requests.HTTPError("Redirect")
 
 
-def fetch_book_page(url, book_id):
-    url_book = f"{url}/b{book_id}/"
-    response = requests.get(url_book)
+def fetch_page(url):
+    response = requests.get(url)
     check_for_redirect(response)
     response.raise_for_status()
     return BeautifulSoup(response.text, 'lxml')

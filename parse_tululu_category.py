@@ -7,18 +7,10 @@ import requests
 from pathlib import Path
 from bs4 import BeautifulSoup
 from urllib.parse import urlparse
-from tululu_parsing_functions import check_for_redirect, fetch_book_page, get_author_and_title, get_image
+from tululu_parsing_functions import check_for_redirect, fetch_page, get_author_and_title, get_image
 from tululu_parsing_functions import get_book_comments, get_book_genres, download_txt, download_image
 
 URL = "https://tululu.org"
-
-
-def fetch_catalog_page(page_number):
-    url_catalog_page = f"https://tululu.org/l55/{page_number}/"
-    response = requests.get(url_catalog_page)
-    check_for_redirect(response)
-    response.raise_for_status()
-    return BeautifulSoup(response.text, 'lxml')
 
 
 def extract_book_ids(soup):
@@ -32,7 +24,8 @@ def extract_book_ids(soup):
 
 
 def download_book(book_id, dest_folder, skip_txt=False, skip_imgs=False):
-    soup = fetch_book_page(URL, book_id)
+    url_book = f"{URL}/b{book_id}/"
+    soup = fetch_page(url_book)
     title, author = get_author_and_title(soup)
     if not skip_txt:
         download_txt(URL, book_id, title, folder=dest_folder)
@@ -94,7 +87,8 @@ def main():
         attempt = 0
         while True:
             try:
-                soup = fetch_catalog_page(book_page)
+                url_catalog_page = f"https://tululu.org/l55/{book_page}/"
+                soup = fetch_page(url_catalog_page)
                 book_ids = extract_book_ids(soup)
                 for book_id in book_ids:
                     try:
