@@ -34,26 +34,24 @@ def download_book(book_id, dest_folder, skip_txt=False, skip_imgs=False):
         download_image(title, image_url, folder=dest_folder)
     else:
         relative_url = ''
-    book_comments = get_book_comments(soup)
-    book_genres = get_book_genres(soup)
     book_details = {
         "title": title,
         "author": author,
         "img_src": relative_url,
-        "comments": [str(f"{comment.text}") for comment in book_comments],
-        "genres": [str(f"{genre.text}") for genre in book_genres]
+        "comments": [str(f"{comment.text}") for comment in get_book_comments(soup)],
+        "genres": [str(f"{genre.text}") for genre in get_book_genres(soup)]
     }
-    return title, author, relative_url, book_comments, book_genres, book_details
+    return book_details
 
 
-def console_output(title, author, book_comments, book_genres):
-    print(f"Название: {title}\nАвтор: {author}")
+def console_output(book_details):
+    print(f"Название: {book_details["title"]}\nАвтор: {book_details["author"]}")
     print("\nЖанр книги: ")
-    for genre_link in book_genres:
-        print(f"{genre_link.text}")
+    for genre_link in book_details["genres"]:
+        print(f"{genre_link}")
     print(f"\nКомментарии к книге: ")
-    for comment in book_comments:
-        print(f"{comment.text}")
+    for comment in book_details["comments"]:
+        print(f"{comment}")
 
 
 def create_json_output(books_info, folder=None):
@@ -92,12 +90,11 @@ def main():
                 book_ids = extract_book_ids(soup)
                 for book_id in book_ids:
                     try:
-                        title, author, relative_url, book_comments, book_genres, book_details = (
-                            download_book(book_id, skip_txt=parser_args.skip_txt,
-                                          skip_imgs=parser_args.skip_imgs,
-                                          dest_folder=parser_args.dest_folder))
+                        book_details = download_book(book_id, skip_txt=parser_args.skip_txt,
+                                                     skip_imgs=parser_args.skip_imgs,
+                                                     dest_folder=parser_args.dest_folder)
                         books_details.append(book_details)
-                        console_output(title, author, book_comments, book_genres)
+                        console_output(book_details)
                     except requests.ConnectionError as err:
                         print(f"Ошибка соединения для книги - {book_page} (попытка {attempt + 1}): {err}")
                         time.sleep(10)
