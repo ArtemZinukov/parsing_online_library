@@ -110,7 +110,7 @@ def main():
                         attempt += 1
                     except (AttributeError, requests.RequestException) as err:
                         print(f"Ошибка загрузки книги - {book_id}: {err}")
-                        break
+                break
             except requests.ConnectionError as err:
                 print(f"Ошибка соединения для книги - {book_page} (попытка {attempt + 1}): {err}")
                 time.sleep(10)
